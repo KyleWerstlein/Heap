@@ -6,13 +6,15 @@
 #include <fstream>
 #include <cstdlib>
 
+#define my_sizeof(type) ((char *)(&type+1)-(char*)(&type))
+
 using namespace std;
 
 int main() {
-  char* input = new char[5]; // hold manual input
+  char* input = new char[4]; // hold manual input
   char* input2 = new char[8]; // input for file or type
   // char* input3 = new char[100]; // hold numbers for heap
-  int* intinput = new int[5];
+  int* intinput = new int[4];
   int* intarray = new int[100]; // hold numbers after casted from char to int
   int randomnumbers[100];
   for(int i = 0; i < 100; i++) {
@@ -63,23 +65,59 @@ int main() {
   else if(!choice2) { // read from keyboard
     // FIX READING FROM KEYBOARD. CAN ONLY TAKE NUMBERS 1 - 9 ATM.
     int numbers = 0;
+    int newnumber = 0;
     bool done = false;
     cout << "Input a number and press enter. When you're done type \"done\"" << endl;
-    while(!done && intinput[99] == 0) {
-      cin.getline(input, 5);
+    while(!done && intarray[99] == 0) {
+      cin.getline(input, 4);
       if(strcmp(input, "done") == 0){
 	done = true;
       }
-      if(!(int*)input > 1000 || !(int*)input < 1) { // if in range
-	//input3[numbers] = *input;
-	intarray[numbers] = (int)*input;
-	numbers++;
-	for(int i = 0; i < numbers; i++) {
-	  cout << intarray[i] << endl;
-	}
+      for(int i = 0; i < 4; i++) {
+	intinput[i] = (int)input[i];
       }
-      else {
-	cout << "number is not in range!" << endl;
+      if(input[0] > 47 && input[0] < 58) {
+	if(!(int*)input > 1000 || (int*)input > 0) { // if in range
+	  int size = sizeof input / (int)input[0];
+	  cout << "size " << sizeof input << endl;
+	  if(size == 4) {
+	    newnumber += 1000;
+	  }
+	  else if(size == 3) { // probably an easier way to do this that I'm not thinking about
+	    newnumber += (100 * (int)input[0]);
+	    newnumber += (10 * (int)input[1]);
+	    newnumber += (int)input[2];
+	    cout << "3 digits" << endl;
+	  }
+	  else if(size == 2) {
+	    newnumber += (10 * (int)input[0]);
+	    newnumber += (int)input[1];
+	    cout << "2 digits" << endl;
+	  }
+	  else if (size == 1) {
+	    newnumber += (int)input[0];
+	    cout << "1 digits" << endl;
+	  }
+	  else {
+	    cout << "invalid input." << endl;
+	  }
+	  intarray[numbers] = newnumber;
+	  numbers++;
+	  for(int i = 0; i < numbers; i++) {
+	    cout << intarray[i] << endl;
+	  }
+	  /*  input3[numbers] = *input;
+	  memcpy(intinput, input, sizeof input);
+	  cout << "sizeof intinput " << sizeof intinput << endl;
+	  intarray[numbers] = (int)*input;
+	  numbers++;
+	  for(int i = 0; i < numbers; i++) {
+	    cout << intinput[i] << endl;
+	    }*/
+	}
+	else {
+	  cout << "number is not in range!" << endl;
+	}
       }
     }
   }
